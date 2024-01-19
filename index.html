@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Document</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="./index.js" defer></script>
+</head>
+
+<body>
+  <div class="container">
+    <div class="input-container">
+      <h1>Github Search Api</h1>
+      <div>
+        <!-- <label class="input-label" for="input">Search github users</label> -->
+        <input placeholder="johnpapa" id="input" type="text" class="input" />
+      </div>
+    </div>
+
+
+    <div class="loader none"></div>
+
+    <div class="main-content">
+
+      <div class="profile-info-container">
+        <div>
+          <img class="avatar"
+            src="https://images.unsplash.com/photo-1705312327064-09a95fc96cc7?w=1000&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw1fHx8ZW58MHx8fHx8"
+            alt="" />
+        </div>
+        <div class="profile-info">
+          <h2 class="username">John Doe</h2>
+          <p class="bio">Bio</p>
+          <p class="location">Locaation</p>
+          <div class="follow-container">
+            <div>Followers: <span class="followers">X</span></div>
+            <div>Following: <span class="following">X</span></div>
+          </div>
+          <em class="twitter">Link.....</em>
+        </div>
+      </div>
+
+      <div class="profile-link-container">
+        Github Link:
+        <a target="_blank" class="profile-link">Profile Link</a>
+      </div>
+
+      <div class="repos">
+        <div class="repo-card">
+          <h2>Heroes</h2>
+          <p>Description</p>
+          <div class="tags-list">
+            <div class="tag">javascript</div>
+            <div class="tag">javascript</div>
+            <div class="tag">javascript</div>
+            <div class="tag">javascript</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pagination">
+        <div class="numbers">
+
+        </div>
+        <div class="actions">
+          <button>Older</button>
+          <button>Newer</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</body>
+
+</html>
