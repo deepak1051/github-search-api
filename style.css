@@ -162,6 +162,21 @@ body {
   }
 }
 
+@media only screen and (width< 640px) {
+  .repo-card {
+    width: 100%;
+  }
+  .container {
+    /* background-color: red; */
+    border: none;
+    padding: 0;
+  }
+  .numbers {
+    /* background-color: red; */
+    flex-wrap: wrap;
+  }
+}
+
 /* loader styles */
 .loader {
   margin: 20px auto;
@@ -183,4 +198,20 @@ body {
   100% {
     -webkit-transform: rotate(360deg);
   }
+}
+
+.dropdown {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.dropdown select {
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.dropdown h3 {
+  font-size: 18px;
 }

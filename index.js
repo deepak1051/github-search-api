@@ -10,10 +10,10 @@ const following = document.querySelector('.following');
 const mainContent = document.querySelector('.main-content');
 const loader = document.querySelector('.loader');
 const repos = document.querySelector('.repos');
-
+const repoPerPage = document.querySelector('.repo-per-page');
 const numbers = document.querySelector('.numbers');
-
-console.log(numbers);
+const older = document.querySelector('.older');
+const newer = document.querySelector('.newer');
 
 let timer;
 let page = 1;
@@ -34,58 +34,36 @@ const fetchData = async (value) => {
 
   mainContent.classList.remove('hidden');
   loader.classList.add('none');
-
-  console.log(data);
-
-  avatar.setAttribute('src', data.avatar_url);
-  username.textContent = data.name;
-  bio.textContent = data.bio;
-  location.textContent = data.location;
-  twitter.textContent = data.twitter_username;
-  profileLink.textContent = data.html_url;
-  profileLink.setAttribute('href', data.html_url);
-  followers.textContent = data.followers;
-  following.textContent = data.following;
-  loc.textContent = data.location;
+  //set profile data
+  setProfileData(data);
 
   // pagination
-  const total_pages = Math.ceil(data.public_repos / 10);
-  let page = 1;
-  console.log(total_pages);
+  let per_page = repoPerPage.value;
 
-  const dummyArr = Array.from({ length: total_pages }, (_, i) => i + 1);
-
-  numbers.textContent = '';
-
-  dummyArr.forEach((el) => {
-    const page = document.createElement('span');
-    page.classList.add('single-page-number');
-    page.textContent = parseInt(el);
-    if (page.textContent == 1) {
-      page.classList.add('active');
-    }
-    numbers.appendChild(page);
+  // paginate ({per_page:X, repoCount:X, })
+  paginate({
+    per_page,
+    repoCount: data.public_repos,
+    url: data.repos_url,
   });
 
-  document.querySelectorAll('.single-page-number').forEach((btn) => {
-    btn.addEventListener('click', (e) => {
-      document
-        .querySelectorAll('.single-page-number')
-        .forEach((elm) => elm.classList.remove('active'));
+  // fetchRepo(data.repos_url, page, per_page);
 
-      // if (e.target.textContent != page) {
-      e.target.classList.add('active');
-      fetchRepo(data.repos_url, e.target.textContent);
-      // }
+  repoPerPage.addEventListener('input', (e) => {
+    paginate({
+      per_page: e.target.value,
+      repoCount: data.public_repos,
+      url: data.repos_url,
     });
+    // fetchRepo(data.repos_url, page, e.target.value);
   });
-
-  fetchRepo(data.repos_url, page);
 };
 
-const fetchRepo = async (url, page = 1) => {
-  console.log(url);
-  const res = await fetch(`${url}?page=${page}&per_page=10`);
+const fetchRepo = async (url, page = 1, per_page = 10) => {
+  console.log('url', url);
+  console.log('page', page);
+  console.log('per_page', per_page);
+  const res = await fetch(`${url}?page=${page}&per_page=${per_page}`);
   const data = await res.json();
 
   repos.textContent = '';
@@ -107,9 +85,9 @@ const fetchRepo = async (url, page = 1) => {
       element.topics.forEach((topic) => {
         const tag = document.createElement('div');
         tag.classList.add('tag');
-        console.log(topic);
+
         tag.textContent = topic;
-        console.log(tag);
+
         topicsList.appendChild(tag);
       });
     }
@@ -124,3 +102,51 @@ const fetchRepo = async (url, page = 1) => {
 
 // intial data
 fetchData('johnpapa');
+
+const paginate = ({ per_page, repoCount, url }) => {
+  const total_pages = Math.ceil(repoCount / per_page);
+
+  const dummyArr = Array.from({ length: total_pages }, (_, i) => i + 1);
+
+  numbers.textContent = '';
+
+  dummyArr.forEach((el) => {
+    const page = document.createElement('span');
+    page.classList.add('single-page-number');
+    page.textContent = parseInt(el);
+    if (page.textContent == 1) {
+      page.classList.add('active');
+      selectedElement = page;
+    }
+    numbers.appendChild(page);
+  });
+
+  nextElement = document.querySelectorAll('.single-page-number')[1];
+
+  document.querySelectorAll('.single-page-number').forEach((btn) => {
+    btn.addEventListener('click', (e) => {
+      document
+        .querySelectorAll('.single-page-number')
+        .forEach((elm) => elm.classList.remove('active'));
+
+      e.target.classList.add('active');
+
+      fetchRepo(url, e.target.textContent, per_page);
+    });
+  });
+
+  fetchRepo(url, page, per_page);
+};
+
+const setProfileData = (data) => {
+  avatar.setAttribute('src', data.avatar_url);
+  username.textContent = data.name;
+  bio.textContent = data.bio;
+  location.textContent = data.location;
+  twitter.textContent = data.twitter_username;
+  profileLink.textContent = data.html_url;
+  profileLink.setAttribute('href', data.html_url);
+  followers.textContent = data.followers;
+  following.textContent = data.following;
+  loc.textContent = data.location;
+};
