@@ -27,6 +27,8 @@ input.addEventListener('input', (e) => {
 });
 
 const fetchData = async (value) => {
+  repos.textContent = '';
+
   mainContent.classList.add('hidden');
   loader.classList.remove('none');
   const res = await fetch(`https://api.github.com/users/${value}?type:user`);
@@ -41,13 +43,12 @@ const fetchData = async (value) => {
   let per_page = repoPerPage.value;
 
   // paginate ({per_page:X, repoCount:X, })
+
   paginate({
     per_page,
     repoCount: data.public_repos,
     url: data.repos_url,
   });
-
-  // fetchRepo(data.repos_url, page, per_page);
 
   repoPerPage.addEventListener('input', (e) => {
     paginate({
@@ -55,14 +56,10 @@ const fetchData = async (value) => {
       repoCount: data.public_repos,
       url: data.repos_url,
     });
-    // fetchRepo(data.repos_url, page, e.target.value);
   });
 };
 
 const fetchRepo = async (url, page = 1, per_page = 10) => {
-  console.log('url', url);
-  console.log('page', page);
-  console.log('per_page', per_page);
   const res = await fetch(`${url}?page=${page}&per_page=${per_page}`);
   const data = await res.json();
 
@@ -101,7 +98,10 @@ const fetchRepo = async (url, page = 1, per_page = 10) => {
 };
 
 // intial data
-fetchData('johnpapa');
+
+window.addEventListener('load', (event) => {
+  fetchData('johnpapa');
+});
 
 const paginate = ({ per_page, repoCount, url }) => {
   const total_pages = Math.ceil(repoCount / per_page);
@@ -120,8 +120,6 @@ const paginate = ({ per_page, repoCount, url }) => {
     }
     numbers.appendChild(page);
   });
-
-  nextElement = document.querySelectorAll('.single-page-number')[1];
 
   document.querySelectorAll('.single-page-number').forEach((btn) => {
     btn.addEventListener('click', (e) => {
