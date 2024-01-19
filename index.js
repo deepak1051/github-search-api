@@ -17,6 +17,7 @@ const newer = document.querySelector('.newer');
 
 let timer;
 let page = 1;
+let fetchDataResult = [];
 
 input.addEventListener('input', (e) => {
   clearTimeout(timer);
@@ -26,6 +27,14 @@ input.addEventListener('input', (e) => {
   }, 1000);
 });
 
+repoPerPage.addEventListener('input', (e) => {
+  paginate({
+    per_page: e.target.value,
+    repoCount: fetchDataResult.public_repos,
+    url: fetchDataResult.repos_url,
+  });
+});
+
 const fetchData = async (value) => {
   repos.textContent = '';
 
@@ -33,6 +42,7 @@ const fetchData = async (value) => {
   loader.classList.remove('none');
   const res = await fetch(`https://api.github.com/users/${value}?type:user`);
   const data = await res.json();
+  fetchDataResult = data;
 
   mainContent.classList.remove('hidden');
   loader.classList.add('none');
@@ -50,13 +60,14 @@ const fetchData = async (value) => {
     url: data.repos_url,
   });
 
-  repoPerPage.addEventListener('input', (e) => {
-    paginate({
-      per_page: e.target.value,
-      repoCount: data.public_repos,
-      url: data.repos_url,
-    });
-  });
+  // repoPerPage.addEventListener('input', (e) => {
+  //   console.log('add', data.repos_url);
+  //   paginate({
+  //     per_page: e.target.value,
+  //     repoCount: data.public_repos,
+  //     url: data.repos_url,
+  //   });
+  // });
 };
 
 const fetchRepo = async (url, page = 1, per_page = 10) => {
@@ -96,12 +107,6 @@ const fetchRepo = async (url, page = 1, per_page = 10) => {
     repos.appendChild(repoCard);
   });
 };
-
-// intial data
-
-window.addEventListener('load', (event) => {
-  fetchData('johnpapa');
-});
 
 const paginate = ({ per_page, repoCount, url }) => {
   const total_pages = Math.ceil(repoCount / per_page);
@@ -148,3 +153,9 @@ const setProfileData = (data) => {
   following.textContent = data.following;
   loc.textContent = data.location;
 };
+
+// intial data
+window.addEventListener('load', (event) => {
+  console.log('onLoad');
+  fetchData('johnpapa');
+});
