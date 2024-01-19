@@ -48,7 +48,7 @@
       </div>
 
       <div class="dropdown">
-        <h3>Public Repositories</h3>
+        <h3 class="public-repo-heading">Public Repositories: <span class="public_repo_count">X</span></h3>
         <select class="repo-per-page">
           <option value="10">10 repo per page</option>
           <option value="20">20 repo per page</option>
@@ -62,8 +62,13 @@
           <option value="100">100 repo per page</option>
         </select>
       </div>
-      <div class="repos">
 
+      <div class="repo-search-query-container">
+        <label>Repo Search Query</label>
+        <input class="query-term" placeholder="search query" />
+      </div>
+
+      <div class="repos">
         <div class="repo-card">
           <h2>Heroes</h2>
           <p>Description</p>

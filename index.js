@@ -14,10 +14,42 @@ const repoPerPage = document.querySelector('.repo-per-page');
 const numbers = document.querySelector('.numbers');
 const older = document.querySelector('.older');
 const newer = document.querySelector('.newer');
+const publicRepoCount = document.querySelector('.public_repo_count');
+const queryTermEl = document.querySelector('.query-term');
+const dropdown = document.querySelector('.dropdown');
 
 let timer;
-let page = 1;
+
 let fetchDataResult = [];
+let allRepoData = [];
+let queryTerm = '';
+let allFilterData = [];
+
+let repoUrl = '';
+let page = 1;
+let repo_per_page = 10;
+
+queryTermEl.addEventListener('input', (e) => {
+  queryTerm = e.target.value;
+  allFilterData = allRepoData.filter((r) =>
+    r.name.toLowerCase().includes(queryTerm.toLowerCase())
+  );
+  repos.textContent = '';
+
+  repoUi(allFilterData);
+
+  if (e.target.value.trim()) {
+    dropdown.classList.add('hidden');
+    numbers.classList.add('hidden');
+  } else {
+    dropdown.classList.remove('hidden');
+    numbers.classList.remove('hidden');
+    repos.textContent = '';
+    fetchRepo(repoUrl, page, repo_per_page);
+  }
+
+  console.log(allFilterData);
+});
 
 input.addEventListener('input', (e) => {
   clearTimeout(timer);
@@ -59,20 +91,26 @@ const fetchData = async (value) => {
     repoCount: data.public_repos,
     url: data.repos_url,
   });
+};
 
-  // repoPerPage.addEventListener('input', (e) => {
-  //   console.log('add', data.repos_url);
-  //   paginate({
-  //     per_page: e.target.value,
-  //     repoCount: data.public_repos,
-  //     url: data.repos_url,
-  //   });
-  // });
+const fetchAllData = async (url) => {
+  console.log(url);
+  const res = await fetch(url);
+  const data = await res.json();
+  console.log(data);
+  allRepoData = [...data];
+  console.log(allRepoData);
 };
 
 const fetchRepo = async (url, page = 1, per_page = 10) => {
   const res = await fetch(`${url}?page=${page}&per_page=${per_page}`);
   const data = await res.json();
+
+  repoUrl = url;
+  page = page;
+  per_page = per_page;
+
+  fetchAllData(url);
 
   repos.textContent = '';
 
@@ -152,6 +190,7 @@ const setProfileData = (data) => {
   followers.textContent = data.followers;
   following.textContent = data.following;
   loc.textContent = data.location;
+  publicRepoCount.textContent = data.public_repos;
 };
 
 // intial data
@@ -159,3 +198,37 @@ window.addEventListener('load', (event) => {
   console.log('onLoad');
   fetchData('johnpapa');
 });
+
+//repo ui
+const repoUi = (data) => {
+  data.forEach((element) => {
+    const repoCard = document.createElement('div');
+    repoCard.classList.add('repo-card');
+
+    const title = document.createElement('h2');
+    const description = document.createElement('p');
+    const topicsList = document.createElement('div');
+
+    topicsList.classList.add('tags-list');
+
+    title.textContent = element.name;
+    description.textContent = element.description;
+
+    if (element.topics.length > 0) {
+      element.topics.forEach((topic) => {
+        const tag = document.createElement('div');
+        tag.classList.add('tag');
+
+        tag.textContent = topic;
+
+        topicsList.appendChild(tag);
+      });
+    }
+
+    repoCard.appendChild(title);
+    repoCard.appendChild(description);
+    repoCard.appendChild(topicsList);
+
+    repos.appendChild(repoCard);
+  });
+};
